@@ -16,6 +16,18 @@ const theme = extendTheme({
       900: "#212121",
     },
   },
+  components: {
+    button: {
+      variants: {
+        link: {
+          ":focus": {
+            outline: "none",
+            boxShadow: "none",
+          },
+        },
+      },
+    },
+  },
 });
 
 const MyApp = ({ Component, pageProps }) => {
