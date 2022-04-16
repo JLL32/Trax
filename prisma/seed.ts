@@ -33,6 +33,30 @@ const run = async () => {
       password: bcrypt.hashSync("password", salt),
     },
   });
+
+  const songs = await prisma.song.findMany({});
+
+  // NOTE: We're not doing upsert because playlist doesn't have something unique other than
+  // the id which we dont have for the moment
+  await Promise.all(
+    Array(10)
+      .fill(1)
+      .map(async (_, i) => {
+        return prisma.playlist.create({
+          data: {
+            name: `Playlist #${i + 1}`,
+            user: {
+              connect: { id: user.id },
+            },
+            songs: {
+              connect: songs.map((song) => ({
+                id: song.id,
+              })),
+            },
+          },
+        });
+      })
+  );
 };
 
 run()
