@@ -36,6 +36,7 @@ const run = async () => {
 
   const songs = await prisma.song.findMany({});
 
+  // NOTE: we used upsert so each time we run seed command the data won't be duplicated
   // NOTE: We're not doing upsert because playlist doesn't have something unique other than
   // the id which we dont have for the moment
   await Promise.all(
