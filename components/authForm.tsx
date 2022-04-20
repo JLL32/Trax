@@ -15,7 +15,7 @@ const AuthForm: FC<{ mode: "signin" | "signup" }> = ({ mode }) => {
     setLoading(true);
     await auth(mode, { email, password });
     setLoading(false);
-	router.push("/");
+    router.push("/");
   };
 
   return (
