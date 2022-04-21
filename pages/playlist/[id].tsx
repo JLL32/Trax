@@ -19,7 +19,9 @@ const getBGcolor = (id) => {
   return colors[id - 1] || colors[Math.floor(Math.random() * colors.length)];
 };
 
-const Playlist: FC<{ playlist: PlaylistType }> = ({ playlist }) => {
+const Playlist: FC<{ playlist: PlaylistType & { songs: Song[] } }> = ({
+  playlist,
+}) => {
   const color = getBGcolor(playlist.id);
   return (
     <GradientLayout
@@ -27,9 +29,7 @@ const Playlist: FC<{ playlist: PlaylistType }> = ({ playlist }) => {
       roundImage={false}
       title={playlist.name}
       subtitle="playlist"
-      description={`${
-        (playlist as typeof playlist & { songs: Song[] }).songs.length
-      } songs`}
+      description={`${playlist.songs.length} songs`}
       image={`https://picsum.photos/400?=random=${playlist.id}`}
     >
       <SongsTable songs={playlist.songs} />
@@ -38,9 +38,17 @@ const Playlist: FC<{ playlist: PlaylistType }> = ({ playlist }) => {
 };
 
 export const getServerSideProps = async ({ query, req }) => {
-  const { id } = validateToken(req.cookies["TRAX-ACCESS-TOKEN"]) as any;
+  const user = validateToken(req.cookies["TRAX-ACCESS-TOKEN"]) as any;
+  if (!user)
+    return {
+      redirect: {
+        permanent: false,
+        path: "/signin",
+      },
+    };
+
   const playlist = await prisma.playlist.findFirst({
-    where: { id: Number(query.id), userId: id },
+    where: { id: Number(query.id), userId: user.id },
     include: {
       songs: {
         include: {
