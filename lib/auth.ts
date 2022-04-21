@@ -24,3 +24,5 @@ export const validateRoute = (handler) => {
     res.json({ error: "Not Authorized" });
   };
 };
+
+export const validateToken = (token: string) => jwt.verify(token, "hello");
